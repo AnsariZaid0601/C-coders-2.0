@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_TITLE 50
+#define MAX_AUTHOR 50
+#define FILENAME "library.txt"
+
+// Define a structure to store book information
+typedef struct {
+    int id;
+    char title[MAX_TITLE];
+    char author[MAX_AUTHOR];
+    int year;
+} Book;
+
+// Function prototypes
+void addBook();
+void deleteBook();
+void searchBooks();
+void viewAllBooks();
+void saveBook(Book book);
+void loadBooks();
+
+int bookCount = 0; // Number of books in memory
+Book books[100];   // Array to store books in memory
+
+int main() {
+    int choice;
+
+    // Load books from file at the start
+    loadBooks();
+
+    while (1) {
+        printf("\nLibrary Management System\n");
+        printf("1. View All Books\n");
+        printf("2. Add a Book\n");
+        printf("3. Delete a Book\n");
+        printf("4. Search for Books\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                viewAllBooks();
+                break;
+            case 2:
+                addBook();
+                break;
+            case 3:
+                deleteBook();
+                break;
+            case 4:
+                searchBooks();
+                break;
+            case 5:
+                printf("Exiting the program. Goodbye!\n");
+                return 0;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+    return 0;
+}
+
+// Function to load books from the file
+void loadBooks() {
+    FILE *file = fopen(FILENAME, "r");
+    if (!file) {
+        printf("No existing library data found.\n");
+        return;
+    }
+
+    while (fscanf(file, "%d,%49[^,],%49[^,],%d\n", &books[bookCount].id, books[bookCount].title, books[bookCount].author, &books[bookCount].year) != EOF) {
+        bookCount++;
+    }
+    fclose(file);
+    printf("Loaded %d books from the file.\n", bookCount);
+}
+
+// Function to save a book to the file
+void saveBook(Book book) {
+    FILE *file = fopen(FILENAME, "a");
+    if (!file) {
+        printf("Error opening file to save book.\n");
+        return;
+    }
+    fprintf(file, "%d,%s,%s,%d\n", book.id, book.title, book.author, book.year);
+    fclose(file);
+}
+/*
+Library Management System
+1. View All Books
+2. Add a Book
+3. Delete a Book
+4. Search for Books
+5. Exit
+Enter your choice: 2
+Enter book title: The Great Gatsby
+Enter book author: F. Scott Fitzgerald
+Enter year of publication: 1925
+Book added successfully with ID 1.
+*/
